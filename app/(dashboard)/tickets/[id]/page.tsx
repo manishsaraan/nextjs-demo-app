@@ -13,6 +13,20 @@ interface Prop {
     id: string
 }
 
+export async function generateMetadata({params }: { params: { id: number }}){
+  const { id } = params;
+  const resp = await fetch('http://localhost:4000/tickets/'+id,{
+        next: {
+            revalidate: 60 // refetch in 60 seconds
+        }
+    });
+
+    const data = await resp.json();
+
+  return {
+    title: `Dojo Helpdesk | ${data.title} `
+  }
+}
 export const dynamicParams = true;
 // allow pages to be created ahead of time in prod
 export async function generateStaticParams(){

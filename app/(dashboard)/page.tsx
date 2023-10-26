@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import ProductCard from './components/ProductCard'
+import ProductCard from '../components/ProductCard'
 
 interface User {
   id: number,
