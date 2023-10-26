@@ -20,7 +20,7 @@ export async function DELETE(_:any, { params }:any) {
 export async function GET(request:any,{ params }: any){
     const {id } = params;
 
-    const resp = await fetch('https://supa-next.netlify.app/tickets/'+id);
+    const resp = await fetch('/tickets/'+id);
     if(!resp.ok){
      return NextResponse.json({ error: `can't find the ticket`},{status: 404})
     }

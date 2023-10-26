@@ -12,7 +12,7 @@ export default function DeleteIcon({ id }:any) {
   const handleClick = async () => {
     setIsLoading(true)
     console.log('deleting id - ', id);
-    const res = await fetch("https://supa-next.netlify.app/api/tickets/"+id, {
+    const res = await fetch("/api/tickets/"+id, {
         method: 'delete'
     });
 
