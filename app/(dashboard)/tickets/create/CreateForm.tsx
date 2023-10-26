@@ -17,7 +17,7 @@ export default function CreateForm() {
 
     const newTicket = { title, body, priority  }
 
-    const res = await fetch('http://localhost:3000/api/tickets', {
+    const res = await fetch('https://supa-next.netlify.app/api/tickets', {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify(newTicket)
