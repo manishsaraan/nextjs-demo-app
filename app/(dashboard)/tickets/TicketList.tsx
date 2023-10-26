@@ -1,13 +1,19 @@
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
+import { cookies } from "next/headers";
 
 async function getTickets(){ 
 
-    const resp = await fetch('http://localhost:4000/tickets',{
-        next: {
-            revalidate: 0 // refetch in 30 seconds
-        }
-    });
-    const data = await resp.json();
+    const supa = createServerComponentClient({cookies});
+
+    const res:any = await supa.from("Tickets").select();
+    console.log(res);
+    const { data, error } = res;
+
+    if(error){
+      console.log(error);
+      return;
+    }
 
     return data;
 }
@@ -22,6 +28,8 @@ interface Ticket {
 
 export default async function TicketList() {
   const tickets:Ticket[] = await getTickets();
+
+  console.log(tickets,"tickets")
 
   return (
     <>

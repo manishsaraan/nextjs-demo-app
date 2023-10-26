@@ -1,5 +1,8 @@
+import { createServerComponentClient, createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { notFound } from 'next/navigation';
+import { cookies } from 'next/headers';
 import React from 'react'
+import DeleteButton from './DeleteButton';
 
 interface Ticket {
     id: string,
@@ -15,48 +18,38 @@ interface Prop {
 
 export async function generateMetadata({params }: { params: { id: number }}){
   const { id } = params;
-  const resp = await fetch('http://localhost:4000/tickets/'+id,{
-        next: {
-            revalidate: 60 // refetch in 60 seconds
-        }
-    });
-
-    const data = await resp.json();
+  const supa = createServerComponentClient({cookies});
+  const { data } = await supa.from("Tickets").select().eq("id", id).single()
 
   return {
-    title: `Dojo Helpdesk | ${data.title} `
+    title: `Dojo Helpdesk | ${data ? data.title : "Ticket not found"} `
   }
 }
 export const dynamicParams = true;
 // allow pages to be created ahead of time in prod
-export async function generateStaticParams(){
-    //[{id: 1}, {id: 2}]
-    const res = await fetch('http://localhost:4000/tickets/');
+// export async function generateStaticParams(){
+//     //[{id: 1}, {id: 2}]
+//     const res = await fetch('http://localhost:4000/tickets/');
 
-    const tickets = await res.json();
+//     const tickets = await res.json();
 
-    return tickets.map((ticket:Ticket) => {
-        return {
-            id: ticket.id
-        }
-    })
-}
+//     return tickets.map((ticket:Ticket) => {
+//         return {
+//             id: ticket.id
+//         }
+//     })
+// }
 
-async function getTicket(id: string) {
-    await new Promise(resolve => setTimeout(resolve, 3000));
+async function getTicket(id: string) { 
+    const supa = createServerComponentClient({cookies});
+    const { data } = await supa.from("Tickets").select().eq("id", id).single()
+  
 
-    
-    const resp = await fetch('http://localhost:4000/tickets/'+id,{
-        next: {
-            revalidate: 60 // refetch in 60 seconds
-        }
-    });
-
-    if(!resp.ok){
+    if(!data){
         notFound();
         return;
     }
-    const data = await resp.json();
+    
 
     return data;
 }
@@ -65,10 +58,17 @@ export default async function TicketDetails({params}: { params:Prop}) {
     const { id } = params;
     const ticket:Ticket = await getTicket(id);
 
+    const supa = createServerActionClient({ cookies });
+    const { data }: any = await supa.auth.getSession();
+
+    console.log(data.session.user.email,"--------", ticket.user_email)
     return (
         <main>
             <nav>
                 <h2>Ticket Details</h2>
+                <div className='ml-auto'>{data.session.user.email === ticket.user_email ?(
+                    <DeleteButton id={ticket.id} />
+                ):null}</div>
             </nav>
             <div className='card'>
                  <h3>{ticket.title}</h3>
