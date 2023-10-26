@@ -1,6 +1,7 @@
 import Link from "next/link";
 
-async function getTickets(){
+async function getTickets(){ 
+
     const resp = await fetch('http://localhost:4000/tickets',{
         next: {
             revalidate: 0 // refetch in 30 seconds
