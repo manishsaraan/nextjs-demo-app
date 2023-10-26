@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import Logout from '../Logout'
 import Logo from './dojo-logo.png'
 
-export default function Navbar() {
+export default function Navbar({user}: { user:any}) {
   return (
     <nav>
       <Image
@@ -14,7 +15,9 @@ export default function Navbar() {
       />
       <h1>Dojo Helpdesk</h1>
       <Link href="/">Dashboard</Link>
-      <Link href="/tickets">Tickets</Link>
+      <Link className='mr-auto' href="/tickets">Tickets</Link>
+      { user ? (<><span>Hello, {user.email} </span> <Logout/> </>): null }
+      
     </nav>
   )
 }
